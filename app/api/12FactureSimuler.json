@@ -1,0 +1,347 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "text",
+        "name": "idcontrat"
+      },
+      {
+        "type": "text",
+        "name": "annee"
+      },
+      {
+        "type": "text",
+        "name": "idtarif"
+      }
+    ]
+  },
+  "exec": {
+    "steps": [
+      {
+        "name": "custom",
+        "module": "api",
+        "action": "send",
+        "options": {
+          "url": "http://192.168.9.60:70/api/Simulation/12-Mois",
+          "dataType": "json",
+          "data": {
+            "annee": "{{$_GET.annee}}",
+            "idContrat": "{{$_GET.idcontrat}}",
+            "idtarif": "{{$_GET.idtarif}}"
+          },
+          "method": "POST",
+          "schema": [
+            {
+              "type": "array",
+              "name": "data",
+              "sub": [
+                {
+                  "type": "number",
+                  "name": "annee"
+                },
+                {
+                  "type": "text",
+                  "name": "nom_periode"
+                },
+                {
+                  "type": "number",
+                  "name": "mtn_reel"
+                },
+                {
+                  "type": "number",
+                  "name": "simule"
+                }
+              ]
+            },
+            {
+              "type": "object",
+              "name": "headers",
+              "sub": [
+                {
+                  "type": "text",
+                  "name": "content-type"
+                },
+                {
+                  "type": "text",
+                  "name": "date"
+                },
+                {
+                  "type": "text",
+                  "name": "server"
+                },
+                {
+                  "type": "text",
+                  "name": "x-powered-by"
+                }
+              ]
+            }
+          ]
+        },
+        "output": true,
+        "meta": [
+          {
+            "type": "array",
+            "name": "data",
+            "sub": [
+              {
+                "type": "number",
+                "name": "annee"
+              },
+              {
+                "type": "text",
+                "name": "nom_periode"
+              },
+              {
+                "type": "number",
+                "name": "mtn_reel"
+              },
+              {
+                "type": "number",
+                "name": "simule"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "headers",
+            "sub": [
+              {
+                "type": "text",
+                "name": "content-type"
+              },
+              {
+                "type": "text",
+                "name": "date"
+              },
+              {
+                "type": "text",
+                "name": "server"
+              },
+              {
+                "type": "text",
+                "name": "x-powered-by"
+              }
+            ]
+          }
+        ],
+        "outputType": "object"
+      },
+      {
+        "name": "custom1",
+        "module": "dbupdater",
+        "action": "custom",
+        "options": {
+          "connection": "edbtest",
+          "sql": {
+            "query": "SELECT libelle FROM gescli.categ_tarif\nWHERE num_categ = :P1\nORDER BY num_categ ASC ",
+            "params": [
+              {
+                "name": ":P1",
+                "value": "{{$_GET.idtarif}}",
+                "test": "3"
+              }
+            ]
+          },
+          "test": true
+        },
+        "output": true,
+        "meta": [
+          {
+            "name": "libelle",
+            "type": "text"
+          }
+        ],
+        "outputType": "array"
+      },
+      {
+        "name": "i",
+        "module": "core",
+        "action": "setvalue",
+        "options": {
+          "value": 0
+        },
+        "meta": [],
+        "outputType": "number"
+      },
+      {
+        "name": "up",
+        "module": "core",
+        "action": "setvalue",
+        "options": {
+          "value": 0
+        },
+        "meta": [],
+        "outputType": "number"
+      },
+      {
+        "name": "",
+        "module": "core",
+        "action": "while",
+        "options": {
+          "while": "{{i<12}}",
+          "exec": {
+            "steps": [
+              {
+                "name": "",
+                "module": "core",
+                "action": "condition",
+                "options": {
+                  "if": "{{custom.data[i].simule.toNumber()>custom.data[i].mtn_reel.toNumber()}}",
+                  "then": {
+                    "steps": {
+                      "name": "up",
+                      "module": "core",
+                      "action": "setvalue",
+                      "options": {
+                        "value": "{{up.toNumber()+1}}"
+                      },
+                      "meta": [],
+                      "output": false,
+                      "outputType": "number"
+                    }
+                  }
+                },
+                "outputType": "boolean"
+              },
+              {
+                "name": "i",
+                "module": "core",
+                "action": "setvalue",
+                "options": {
+                  "value": "{{i.toNumber()+1}}"
+                },
+                "meta": [],
+                "outputType": "number"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "i",
+        "module": "core",
+        "action": "setvalue",
+        "options": {
+          "value": 0
+        },
+        "meta": [],
+        "outputType": "number"
+      },
+      {
+        "name": "down",
+        "module": "core",
+        "action": "setvalue",
+        "options": {
+          "value": 0
+        },
+        "meta": [],
+        "outputType": "number"
+      },
+      {
+        "name": "",
+        "module": "core",
+        "action": "while",
+        "options": {
+          "while": "{{i<12}}",
+          "exec": {
+            "steps": [
+              {
+                "name": "",
+                "module": "core",
+                "action": "condition",
+                "options": {
+                  "if": "{{custom.data[i].simule.toNumber()<custom.data[i].mtn_reel.toNumber()}}",
+                  "then": {
+                    "steps": {
+                      "name": "down",
+                      "module": "core",
+                      "action": "setvalue",
+                      "options": {
+                        "value": "{{down.toNumber()+1}}"
+                      },
+                      "meta": [],
+                      "output": false,
+                      "outputType": "number"
+                    }
+                  }
+                },
+                "outputType": "boolean"
+              },
+              {
+                "name": "i",
+                "module": "core",
+                "action": "setvalue",
+                "options": {
+                  "value": "{{i.toNumber()+1}}"
+                },
+                "meta": [],
+                "outputType": "number"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "list",
+        "module": "arraylist",
+        "action": "create",
+        "options": {
+          "schema": [
+            {
+              "type": "number",
+              "name": "up"
+            },
+            {
+              "type": "number",
+              "name": "down"
+            }
+          ]
+        },
+        "meta": [
+          {
+            "type": "number",
+            "name": "up"
+          },
+          {
+            "type": "number",
+            "name": "down"
+          }
+        ],
+        "outputType": "array"
+      },
+      {
+        "name": "",
+        "module": "arraylist",
+        "action": "set",
+        "options": {
+          "ref": "list",
+          "value": {
+            "up": "{{up}}",
+            "down": "{{down}}"
+          },
+          "index": 0
+        }
+      },
+      {
+        "name": "list",
+        "module": "arraylist",
+        "action": "value",
+        "options": {
+          "ref": "list"
+        },
+        "output": true,
+        "meta": [
+          {
+            "name": "up",
+            "type": "number"
+          },
+          {
+            "name": "down",
+            "type": "number"
+          }
+        ],
+        "outputType": "array"
+      }
+    ]
+  }
+}

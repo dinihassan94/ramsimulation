@@ -1,0 +1,161 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "text",
+        "name": "idcontrat"
+      },
+      {
+        "type": "text",
+        "name": "idperiode"
+      },
+      {
+        "type": "text",
+        "name": "idtarif"
+      },
+      {
+        "type": "text",
+        "name": "annee"
+      }
+    ]
+  },
+  "exec": {
+    "steps": [
+      {
+        "name": "custom",
+        "module": "dbupdater",
+        "action": "custom",
+        "options": {
+          "connection": "edbtest",
+          "sql": {
+            "query": "SELECT libelle FROM gescli.categ_tarif\nWHERE num_categ = :P1\nORDER BY num_categ ASC ",
+            "params": [
+              {
+                "name": ":P1",
+                "value": "{{$_GET.idtarif}}",
+                "test": "3"
+              }
+            ]
+          }
+        },
+        "output": true,
+        "meta": [
+          {
+            "name": "libelle",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "name": "apiSimulation",
+        "module": "api",
+        "action": "send",
+        "options": {
+          "url": "http://192.168.9.60:70/api/Simulation/1-Mois",
+          "method": "POST",
+          "dataType": "json",
+          "data": {
+            "annee": "{{$_GET.annee}}",
+            "idperiode": "{{$_GET.idperiode}}",
+            "idcontrat": "{{$_GET.idcontrat}}",
+            "simule": "{{$_GET.idtarif}}"
+          },
+          "schema": [
+            {
+              "type": "array",
+              "name": "data",
+              "sub": [
+                {
+                  "type": "text",
+                  "name": "libelles"
+                },
+                {
+                  "type": "number",
+                  "name": "quantite"
+                },
+                {
+                  "type": "number",
+                  "name": "prix_unitaire"
+                },
+                {
+                  "type": "number",
+                  "name": "montant"
+                }
+              ]
+            },
+            {
+              "type": "object",
+              "name": "headers",
+              "sub": [
+                {
+                  "type": "text",
+                  "name": "content-type"
+                },
+                {
+                  "type": "text",
+                  "name": "date"
+                },
+                {
+                  "type": "text",
+                  "name": "server"
+                },
+                {
+                  "type": "text",
+                  "name": "x-powered-by"
+                }
+              ]
+            }
+          ]
+        },
+        "output": true,
+        "meta": [
+          {
+            "type": "array",
+            "name": "data",
+            "sub": [
+              {
+                "type": "text",
+                "name": "libelles"
+              },
+              {
+                "type": "number",
+                "name": "quantite"
+              },
+              {
+                "type": "number",
+                "name": "prix_unitaire"
+              },
+              {
+                "type": "number",
+                "name": "montant"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "headers",
+            "sub": [
+              {
+                "type": "text",
+                "name": "content-type"
+              },
+              {
+                "type": "text",
+                "name": "date"
+              },
+              {
+                "type": "text",
+                "name": "server"
+              },
+              {
+                "type": "text",
+                "name": "x-powered-by"
+              }
+            ]
+          }
+        ],
+        "outputType": "object"
+      }
+    ]
+  }
+}

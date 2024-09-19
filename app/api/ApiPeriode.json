@@ -1,0 +1,27 @@
+{
+  "name": "ApiPeriode",
+  "module": "dbupdater",
+  "action": "custom",
+  "options": {
+    "connection": "edbtest",
+    "sql": {
+      "query": "SELECT id_periode, nom_periode, EXTRACT(YEAR FROM date_periode) AS Annee\nFROM gescli.periode where duree = 1 and date(date_periode) >= '01/01/2021' order by id_periode desc",
+      "params": []
+    }
+  },
+  "output": true,
+  "meta": [
+    {
+      "name": "id_periode",
+      "type": "number"
+    },
+    {
+      "name": "nom_periode",
+      "type": "text"
+    },
+    {
+      "name": "annee",
+      "type": "number"
+    }
+  ]
+}

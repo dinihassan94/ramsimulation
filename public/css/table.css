@@ -1,0 +1,7 @@
+.table-danger{
+    background-color: var(--tertiary) !important;
+}
+.table-success{
+    background-color: var(--green) !important;
+}
+

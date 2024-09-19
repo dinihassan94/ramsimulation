@@ -1,0 +1,276 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "number",
+        "name": "idcontrat"
+      },
+      {
+        "type": "number",
+        "name": "idperiode"
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "FactureOr",
+      "module": "api",
+      "action": "send",
+      "options": {
+        "url": "http://192.168.9.60:70/GetFactureOriginal",
+        "dataType": "json",
+        "data": {
+          "num_Contrat": "{{$_GET.idcontrat}}",
+          "id_Periode": "{{$_GET.idperiode}}"
+        },
+        "schema": [
+          {
+            "type": "array",
+            "name": "data",
+            "sub": [
+              {
+                "type": "number",
+                "name": "num_facture"
+              },
+              {
+                "type": "text",
+                "name": "date_emission"
+              },
+              {
+                "type": "number",
+                "name": "categ_tarif"
+              },
+              {
+                "type": "text",
+                "name": "tarif_libelle"
+              },
+              {
+                "type": "number",
+                "name": "ps"
+              },
+              {
+                "type": "text",
+                "name": "ancienne_date"
+              },
+              {
+                "type": "text",
+                "name": "nouveau_date"
+              },
+              {
+                "type": "number",
+                "name": "ancien_index"
+              },
+              {
+                "type": "number",
+                "name": "nouvel_index"
+              },
+              {
+                "type": "number",
+                "name": "index_r"
+              },
+              {
+                "type": "number",
+                "name": "ancien_index_r"
+              },
+              {
+                "type": "number",
+                "name": "conso_a"
+              },
+              {
+                "type": "number",
+                "name": "conso_rec"
+              },
+              {
+                "type": "number",
+                "name": "ipm_releve"
+              },
+              {
+                "type": "number",
+                "name": "coeff_mult_act"
+              },
+              {
+                "type": "number",
+                "name": "coeff_mult_rea"
+              },
+              {
+                "type": "number",
+                "name": "coeff_mult_ipm"
+              },
+              {
+                "type": "text",
+                "name": "libelle"
+              },
+              {
+                "type": "text",
+                "name": "quantite"
+              },
+              {
+                "type": "text",
+                "name": "prix_unitaire"
+              },
+              {
+                "type": "number",
+                "name": "montant"
+              },
+              {
+                "type": "number",
+                "name": "facmontant"
+              },
+              {
+                "type": "number",
+                "name": "id_periode"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "headers",
+            "sub": [
+              {
+                "type": "text",
+                "name": "content-type"
+              },
+              {
+                "type": "text",
+                "name": "date"
+              },
+              {
+                "type": "text",
+                "name": "server"
+              },
+              {
+                "type": "text",
+                "name": "x-powered-by"
+              }
+            ]
+          }
+        ],
+        "method": "POST"
+      },
+      "output": true,
+      "meta": [
+        {
+          "type": "array",
+          "name": "data",
+          "sub": [
+            {
+              "type": "number",
+              "name": "num_facture"
+            },
+            {
+              "type": "text",
+              "name": "date_emission"
+            },
+            {
+              "type": "number",
+              "name": "categ_tarif"
+            },
+            {
+              "type": "text",
+              "name": "tarif_libelle"
+            },
+            {
+              "type": "number",
+              "name": "ps"
+            },
+            {
+              "type": "text",
+              "name": "ancienne_date"
+            },
+            {
+              "type": "text",
+              "name": "nouveau_date"
+            },
+            {
+              "type": "number",
+              "name": "ancien_index"
+            },
+            {
+              "type": "number",
+              "name": "nouvel_index"
+            },
+            {
+              "type": "number",
+              "name": "index_r"
+            },
+            {
+              "type": "number",
+              "name": "ancien_index_r"
+            },
+            {
+              "type": "number",
+              "name": "conso_a"
+            },
+            {
+              "type": "number",
+              "name": "conso_rec"
+            },
+            {
+              "type": "number",
+              "name": "ipm_releve"
+            },
+            {
+              "type": "number",
+              "name": "coeff_mult_act"
+            },
+            {
+              "type": "number",
+              "name": "coeff_mult_rea"
+            },
+            {
+              "type": "number",
+              "name": "coeff_mult_ipm"
+            },
+            {
+              "type": "text",
+              "name": "libelle"
+            },
+            {
+              "type": "text",
+              "name": "quantite"
+            },
+            {
+              "type": "text",
+              "name": "prix_unitaire"
+            },
+            {
+              "type": "number",
+              "name": "montant"
+            },
+            {
+              "type": "number",
+              "name": "facmontant"
+            },
+            {
+              "type": "number",
+              "name": "id_periode"
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "headers",
+          "sub": [
+            {
+              "type": "text",
+              "name": "content-type"
+            },
+            {
+              "type": "text",
+              "name": "date"
+            },
+            {
+              "type": "text",
+              "name": "server"
+            },
+            {
+              "type": "text",
+              "name": "x-powered-by"
+            }
+          ]
+        }
+      ],
+      "outputType": "object"
+    }
+  }
+}

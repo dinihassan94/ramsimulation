@@ -1,0 +1,162 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "text",
+        "name": "idcontrat"
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "custom",
+      "module": "api",
+      "action": "send",
+      "options": {
+        "url": "{{'http://192.168.9.60:70/GetContrat?NumContrat='+$_GET.idcontrat}}",
+        "schema": [
+          {
+            "type": "array",
+            "name": "data",
+            "sub": [
+              {
+                "type": "number",
+                "name": "id_contrat"
+              },
+              {
+                "type": "text",
+                "name": "nom"
+              },
+              {
+                "type": "text",
+                "name": "adresse"
+              },
+              {
+                "type": "number",
+                "name": "id_payeur"
+              },
+              {
+                "type": "number",
+                "name": "id_pl"
+              },
+              {
+                "type": "text",
+                "name": "code_compteur"
+              },
+              {
+                "type": "number",
+                "name": "solde_compte"
+              },
+              {
+                "type": "text",
+                "name": "libelle"
+              },
+              {
+                "type": "number",
+                "name": "ps"
+              },
+              {
+                "type": "text",
+                "name": "code_pl_phys"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "name": "headers",
+            "sub": [
+              {
+                "type": "text",
+                "name": "content-type"
+              },
+              {
+                "type": "text",
+                "name": "date"
+              },
+              {
+                "type": "text",
+                "name": "server"
+              },
+              {
+                "type": "text",
+                "name": "x-powered-by"
+              }
+            ]
+          }
+        ]
+      },
+      "output": true,
+      "meta": [
+        {
+          "type": "array",
+          "name": "data",
+          "sub": [
+            {
+              "type": "number",
+              "name": "id_contrat"
+            },
+            {
+              "type": "text",
+              "name": "nom"
+            },
+            {
+              "type": "text",
+              "name": "adresse"
+            },
+            {
+              "type": "number",
+              "name": "id_payeur"
+            },
+            {
+              "type": "number",
+              "name": "id_pl"
+            },
+            {
+              "type": "text",
+              "name": "code_compteur"
+            },
+            {
+              "type": "number",
+              "name": "solde_compte"
+            },
+            {
+              "type": "text",
+              "name": "libelle"
+            },
+            {
+              "type": "number",
+              "name": "ps"
+            },
+            {
+              "type": "text",
+              "name": "code_pl_phys"
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "name": "headers",
+          "sub": [
+            {
+              "type": "text",
+              "name": "content-type"
+            },
+            {
+              "type": "text",
+              "name": "date"
+            },
+            {
+              "type": "text",
+              "name": "server"
+            },
+            {
+              "type": "text",
+              "name": "x-powered-by"
+            }
+          ]
+        }
+      ],
+      "outputType": "object"
+    }
+  }
+}

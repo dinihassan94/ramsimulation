@@ -1,0 +1,923 @@
+<!-- Wappler include head-page="layouts/main" fontawesome_5="cdn" bootstrap5="local" is="dmx-app" id="index" appConnect="local" components="{dmxBootstrap5Collapse:{},dmxBootstrap5TableGenerator:{},dmxDatastore:{},dmxDataTraversal:{},dmxFormatter:{},dmxBootstrap5Modal:{},dmxBootstrap5Alert:{},dmxNotifications:{},dmxValidator:{},dmxCharts:{}}" -->
+<dmx-serverconnect id="sc12FactureSimuler" url="/api/12FactureSimuler" noload="true" dmx-on:error="notification.warning('Erreur : Aucune Facture Trouvée')"></dmx-serverconnect>
+<div class="modal fade" id="notif" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-white text-bg-danger bg-opacity-75">
+                <p class="fw-bold text-center pt-2 pb-0 text-white"><i class="fas fa-exclamation-triangle">&nbsp;&nbsp;</i>Facture non trouvée</p>
+            </div>
+        </div>
+    </div>
+</div>
+<dmx-notifications id="notification" closable="true"></dmx-notifications>
+<dmx-serverconnect id="scFactureSimulee" url="/api/FactureSimuler" dmx-param:num_facture="" dmx-param:conso_a="" dmx-param:conso_rec="" dmx-param:ps="" noload="true"></dmx-serverconnect>
+<dmx-serverconnect id="scFactureOriginal" url="/api/FactureOriginal" dmx-param:idcontrat="" dmx-param:idperiode="" noload="true" dmx-on:error="notification.warning('Erreur : Aucune Facture Trouvée')"></dmx-serverconnect>
+<dmx-data-view id="data_viewPeriode" dmx-bind:data="scPeriode.data.ApiPeriode" filter="annee==SearchFacture.Annee1.value" sortDir="desc"></dmx-data-view>
+<dmx-serverconnect id="scPeriode" url="/api/ApiPeriode"></dmx-serverconnect>
+<div class="container-fluid mt-3">
+
+
+    <div class="row">
+        <div class="col text-center">
+
+            <img src="/assets/images/arton142.png" width="50" class="img-fluid mb-2">
+
+
+            <h5 class="text-uppercase lh-sm fw-bolder" dmx-style:color.important="'#003da5'">&nbsp;<i class="fas fa-calculator"></i>&nbsp; Votre énergie quotidienne</h5>
+        </div>
+    </div>
+    <div class="row align-items-stretch">
+
+        <div class="col-xxl-3 col-xl-3 col-lg-3 pe-xxl-0 pe-xl-0 pe-lg-0" id="idcontrat">
+            <div class="card mb-2 shadow-sm">
+                <div class="card-header shadow-sm fw-bold small bg-opacity-75 text-uppercase text-white" dmx-style:background-color="'#0047B6'"><i class="fas fa-clipboard-check">&nbsp;&nbsp;</i>TYPE SIMULATION&nbsp;</div>
+                <div class="card-body bg-white">
+                    <div class="row">
+                        <div class="col">
+                            <select id="TypeFacture" class="form-select form-select-sm">
+                                <option selected="" value="1">- 1 - FACTURE ( 1 Mois )</option>
+                                <option value="2">- 12 - FACTURES ( 1 Année )</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm bg-white">
+
+                <div class="card-header shadow-sm fw-bold small bg-opacity-75 text-uppercase text-white" dmx-style:background-color.important="'#0047B6'"><i class="fas fa-info">&nbsp;&nbsp;</i> Détails du Contrat</div>
+                <div class="card-body shadow-sm">
+
+                    <form id="formContrat" is="dmx-serverconnect-form" action="/api/ApiContrat" dmx-on:done="scFactureOriginal.reset();scFactureSimulee.reset();sc12FactureSimuler.reset()">
+
+
+                        <div class="row">
+
+                            <div class="col-6">
+                                <div class="form-group mb-3">
+
+                                    <input id="idcontrat" name="idcontrat" type="text" class="form-control form-control-sm" style="background-color: #F7F7F7" placeholder="Saisir le № Contrat">
+                                </div>
+                            </div>
+                            <div class="col-5 ps-0">
+                                <button id="btnRecherche" class="btn btn-sm fw-bold shadow-sm btn-outline-primary bg-opacity-100" type="submit"><i class="fas fa-search">&nbsp;</i>Rechercher</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center mt-2 mb-2" dmx-show="state.executing">
+                                <div class="spinner-border text-primary spinner-border-sm" role="status">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    <div class="row">
+
+                        <div class="col small mt-2">
+
+
+                            <div class="card mb-2 shadow-sm bg-white">
+                                <div class="card-body pt-2 pb-1">
+
+                                    <h6 class="card-title fw-bold text-primary-emphasis text-center">№ Contrat : {{formContrat.data.custom.data[0].id_contrat}}</h6>
+                                </div>
+                            </div>
+                            <ul class="list-group">
+
+
+
+
+                                <li class="list-group-item bg-opacity-75 bg-white"><i class="fas fa-arrow-alt-circle-right">&nbsp;&nbsp;</i>Nom du Payeur : <b><a href="#">{{formContrat.data.custom.data[0].nom}}</a>&nbsp;</b></li>
+                                <li class="list-group-item bg-white"><i class="fas fa-arrow-alt-circle-right"></i>&nbsp; Addresse : <b>{{formContrat.data.custom.data[0].adresse}}</b></li>
+                                <li class="list-group-item bg-white"><span><i class="fas fa-arrow-alt-circle-right">&nbsp;&nbsp;</i>Cellule : <b>5</b></span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col small mt-2">
+
+
+                            <ul class="list-group">
+
+
+
+                                <li class="list-group-item bg-white"><span><i class="fas fa-arrow-alt-circle-right">&nbsp;&nbsp;</i>№ Client :&nbsp; <b>{{formContrat.data.custom.data[0].id_payeur}}</b></span></li>
+
+                                <li class="list-group-item bg-white"><i class="fas fa-arrow-alt-circle-right">&nbsp;&nbsp;</i>№ PL : <b><a href="#">{{formContrat.data.custom.data[0].code_pl_phys}}</a></b></li>
+                                <li class="list-group-item bg-white"><i class="fas fa-arrow-alt-circle-right">&nbsp;&nbsp;</i>№ Compteur : <b><a href="#">{{formContrat.data.custom.data[0].code_compteur}}</a></b></li>
+                                <li class="list-group-item bg-white"><i class="fas fa-arrow-alt-circle-right">&nbsp;&nbsp;</i>Puissance : <b>{{formContrat.data.custom.data[0].ps}}</b></li>
+                                <li class="list-group-item bg-white"><i class="fas fa-arrow-alt-circle-right">&nbsp;&nbsp;</i>Gateg. Tarif : <b><a href="#">{{formContrat.data.custom.data[0].libelle}}</a></b></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card mt-2 border border-success-subtle shadow-sm text-bg-danger bg-opacity-100">
+                                <div class="card-body">
+                                    <h6 class="card-title fw-bold text-uppercase text-white"><i class="fas fa-wallet">&nbsp;&nbsp;</i>Solde COMPTE :</h6>
+                                    <h6 class="card-text bg-white lh-lg fw-bold shadow-sm text-body-secondary text-end pe-3">&nbsp;{{formContrat.data.custom.data[0].solde_compte?(formContrat.data.custom.data[0].solde_compte.toNumber()*-1).formatNumber(0, ' ', ' '):0}}&nbsp; FDJ</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-9 col-lg-9" id="facture" dmx-show="TypeFacture.value==1">
+            <div class="row">
+                <div class="col mb-1">
+                    <div class="card shadow-sm bg-white mb-1">
+
+                        <div class="card-header shadow-sm fw-bold small bg-opacity-75 text-uppercase text-white" dmx-style:background-color.important="'#0047B6'"><i class="fas fa-filter">&nbsp;</i> Filtre</div>
+                        <div class="card-body pt-2 pb-0">
+                            <div class="row">
+                                <div class="col ps-4">
+                                    <form id="SearchFacture">
+                                        <div class="row">
+
+                                            <div class="small fw-bold col-2 text-body-secondary text-capitalize ps-0">
+                                                <div class="form-group mb-3"><label class="form-label"><i class="fas fa-arrow-alt-circle-right">&nbsp;&nbsp;</i>Année</label>
+                                                    <select id="Annee1" class="form-select form-select-sm" style="background-color: #F7F7F7">
+                                                        <option value="2024">2024</option>
+                                                        <option value="2023">2023</option>
+                                                        <option value="2022">2022</option>
+                                                        <option value="2021">2021</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="small fw-bold col-2 text-body-secondary text-capitalize ps-0">
+                                                <div class="form-group mb-3">
+                                                    <label class="form-label"><i class="fas fa-arrow-alt-circle-right">&nbsp;&nbsp;</i>Mois</label>
+                                                    <select id="Mois" class="form-select form-select-sm" style="background-color: #F7F7F7" dmx-bind:options="data_viewPeriode.data" optiontext="nom_periode" optionvalue="id_periode">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <!--<div class="small fw-bold col-2 text-body-secondary ps-0">
+                                        <div class="form-group mb-3">
+
+                                            <label class="form-label"><i class="fas fa-arrow-alt-circle-right">&nbsp;&nbsp;</i>Catg. Tarif&nbsp;</label><input id="tarifOr" name="text2" type="text" class="form-control form-control-sm" style="background-color: #F7F7F7" disabled="true">
+                                        </div>
+
+                                    </div>-->
+                                            <div class="mt-4 pt-1 ps-0 col-2">
+                                                <button id="btncharger" class="btn shadow-sm btn-sm fw-bold text-capitalize me-1 btn-outline-primary bg-opacity-100" dmx-on:click="scFactureOriginal.reset();scFactureOriginal.load({idcontrat: formContrat.data.custom.data[0].id_contrat, idperiode: Mois.value});scFactureSimulee.reset()"><i class="fas fa-file-invoice">&nbsp;&nbsp;</i>Facture originale</button>
+
+                                            </div>
+                                            <div class="small fw-bold text-body-secondary ps-0 col-3">
+                                                <div class="form-group mb-3">
+
+                                                    <label class="form-label"><i class="fas fa-arrow-alt-circle-right">&nbsp;&nbsp;</i>Catg. Tarif a simulée&nbsp;</label><select id="TarifSimuler" class="form-select form-select-sm" style="background-color: #F7F7F7" required="">
+                                                        <option value="">--- Choisir un Tarif ---</option>
+                                                        <option value="3">GENERAL NON DOMESTIQUE</option>
+                                                        <option value="11">MT DJIBOUTI</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4 pt-1 ps-0 col-2">
+                                                <button id="btnSimuler" class="btn shadow-sm btn-sm small fw-bold text-capitalize ms-1 btn-outline-primary bg-opacity-100" dmx-on:click="TarifSimuler.validate();scFactureSimulee.reset();scFactureOriginal.reset();scFactureSimulee.load({num_facture: scFactureOriginal.data.FactureOr[0].num_facture, conso_a: scFactureOriginal.data.FactureOr[0].conso_a, conso_rec: scFactureOriginal.data.FactureOr[0].conso_rec, ps: scFactureOriginal.data.FactureOr[0].ps, idcontrat: formContrat.data.custom.data[0].id_contrat, idperiode: Mois.value, idtarif: TarifSimuler.value, annee: Annee1.value},true);scFactureOriginal.load({idcontrat: formContrat.data.custom.data[0].id_contrat, idperiode: Mois.value})"><i class="fas fa-calculator">&nbsp;&nbsp;</i>Simuler</button>
+
+                                            </div>
+
+                                        </div>
+
+
+
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card shadow-sm bg-white">
+
+                <div class="card-header shadow-sm fw-bold small bg-opacity-75 text-uppercase text-white" dmx-style:background-color.important="'#0047B6'"><i class="fas fa-info">&nbsp;&nbsp;</i> Détails des Factures ( SIMULATION )</div>
+                <div class="card-body shadow-sm">
+                    <div class="row">
+                        <div class="col">
+                            <div class="card-group align-items-stretch mb-1">
+                                <div class="card bg-white ms-1 me-1 border-dark-subtle border">
+
+
+                                    <div class="card-header text-body-secondary shadow-sm text-uppercase text-center bg-white">
+
+                                        <h6 class="card-title text-center fw-bold lh-1 mt-1 small text-uppercase text-primary">Facture OriginalE</h6>
+                                    </div>
+                                    <div class="card-body text-center">
+
+                                        <div class="row pt-2" dmx-hide="!scFactureOriginal.data.FactureOr.isEmpty()">
+                                            <div class="col small">
+
+
+                                                <img src="/assets/images/facture.jpg" class="img-fluid img-thumbnail" width="55">
+                                                <p class="fw-bold lh-lg text-danger">{{scFactureOriginal.lastError.status==404?'Aucune Facture Trouvée':''}}</p>
+                                                <div class="spinner-border text-primary spinner-border-sm" role="status" dmx-show="scFactureOriginal.state.executing">
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="row" dmx-show="!scFactureOriginal.data.FactureOr.isEmpty()">
+                                            <div class="col">
+                                                <div class="row mb-3">
+                                                    <div class="col">
+                                                        <div class="card-group justify-content-between shadow-sm">
+                                                            <div class="card bg-white pb-0">
+                                                                <div class="card-body text-start pt-2 pb-0 small fw-bold bg-primary bg-opacity-10 text-primary-emphasis">
+                                                                    <div class="row mt-1 mb-0 pt-0 pb-0">
+                                                                        <div class="col small mb-0 pb-0 ps-2">
+                                                                            <p class="lh-1">- Facture Nº :&nbsp;&nbsp;<span style="font-weight: normal;">{{scFactureOriginal.data.FactureOr.data[0].num_facture}}</span></p>
+                                                                            <p class="lh-1">- Date Facture :&nbsp; <span style="font-weight: normal;">{{scFactureOriginal.data.FactureOr.data[0].date_emission.toDate().formatDate('dd/MM/yyyy')}}</span></p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="card">
+                                                                <div class="card-body pt-2 pb-0 small fw-bold text-primary-emphasis text-bg-primary bg-opacity-10">
+                                                                    <div class="row mt-1 mb-0 pt-0 pb-0">
+                                                                        <div class="col small text-start pt-0 pb-0 ps-2">
+                                                                            <p class="lh-1">- Categ. Tarif :&nbsp; <span style="font-weight: normal;">{{scFactureOriginal.data.FactureOr.data[0].tarif_libelle}}</span></p>
+                                                                            <p class="lh-1">- Puiss. souscrite : <span style="font-weight: normal;">{{scFactureOriginal.data.FactureOr.data[0].ps}}</span>&nbsp;&nbsp;<span style="font-weight: normal;">KVA</span></p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="card bg-white">
+                                                                <div class="card-body small fw-bold bg-primary bg-opacity-10 text-primary-emphasis">
+                                                                    <div class="row">
+                                                                        <div class="col small text-start ps-2">
+
+                                                                            <p class="lh-1">- Cellule :&nbsp; <span style="font-weight: normal;">5</span></p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col pb-0">
+                                                        <div class="table-responsive small">
+                                                            <table class="table table-sm table-bordered small lh-sm shadow-sm">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th scope="row" class="bg-primary bg-opacity-10 text-primary-emphasis">Date des relèves</th>
+                                                                        <th scope="col" class="bg-primary bg-opacity-10 text-primary-emphasis">Index actif
+                                                                            <br>Coeff : {{scFactureOriginal.data.FactureOr.data[0].coeff_mult_act}}
+                                                                        </th>
+                                                                        <th scope="col" class="bg-opacity-10 bg-primary text-primary-emphasis">Index réactif
+                                                                            <br>Coeff : {{scFactureOriginal.data.FactureOr.data[0].coeff_mult_rea}}
+                                                                        </th>
+                                                                        <th scope="col" class="bg-primary bg-opacity-10 text-primary-emphasis">I.P.M
+                                                                            <br>Coeff : {{scFactureOriginal.data.FactureOr.data[0].coeff_mult_ipm}}
+                                                                        </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td class="bg-white">{{scFactureOriginal.data.FactureOr.data[0].ancienne_date.toDate().formatDate('dd/MM/yyyy')}}</td>
+                                                                        <td class="bg-white"><a href="#"></a>{{scFactureOriginal.data.FactureOr.data[0].ancien_index.toNumber().formatNumber(0, ' ', ' ')}}</td>
+                                                                        <td class="bg-white">{{scFactureOriginal.data.FactureOr.data[0].ancien_index_r.toNumber().formatNumber(0, ' ', ' ')}}</td>
+                                                                        <td class="bg-white">{{scFactureOriginal.data.FactureOr.data[0].ipm_releve.toNumber().formatNumber(0, ' ', ' ')}}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td class="bg-white">{{scFactureOriginal.data.FactureOr.data[0].nouveau_date.toDate().formatDate('dd/MM/yyyy')}}</td>
+                                                                        <td class="bg-white">{{scFactureOriginal.data.FactureOr.data[0].nouvel_index.toNumber().formatNumber(0, ' ', ' ')}}</td>
+                                                                        <td class="bg-white">{{scFactureOriginal.data.FactureOr.data[0].index_r.toNumber().formatNumber(0, ' ', ' ')}}</td>
+                                                                        <td class="bg-white"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td class="fw-bold bg-primary bg-opacity-10 text-primary-emphasis">Consommation</td>
+                                                                        <td class="bg-primary bg-opacity-10 text-primary-emphasis fw-bold">{{scFactureOriginal.data.FactureOr.data[0].conso_a.toNumber().formatNumber(0, ' ', ' ')}}</td>
+                                                                        <td class="bg-primary bg-opacity-10 text-primary-emphasis fw-bold">{{scFactureOriginal.data.FactureOr.data[0].conso_rec.toNumber().formatNumber(0, ' ', ' ')}}</td>
+                                                                        <td class="bg-primary bg-opacity-10 text-primary-emphasis fw-bold">{{(scFactureOriginal.data.FactureOr.data[0].ipm_releve * scFactureOriginal.data.FactureOr.data[0].coeff_mult_ipm).toNumber().formatNumber(0, ' ', ' ')}}</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+
+
+
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col small">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered table-sm small">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="text-primary-emphasis bg-primary bg-opacity-10">Libelle</th>
+                                                                        <th class="text-primary-emphasis bg-primary bg-opacity-10">Quantite</th>
+                                                                        <th class="text-primary-emphasis bg-primary bg-opacity-10">Prix unitaire</th>
+                                                                        <th class="text-primary-emphasis bg-primary bg-opacity-10">Montant</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody is="dmx-repeat" dmx-generator="bs5table" dmx-bind:repeat="scFactureOriginal.data.FactureOr.data" id="tableRepeat1">
+                                                                    <tr>
+                                                                        <td dmx-text="libelle" class="bg-white fw-bold text-uppercase"></td>
+                                                                        <td dmx-text="quantite.toNumber().formatNumber(0, ' ', ' ')" class="bg-white"></td>
+                                                                        <td dmx-text="prix_unitaire" class="bg-white"></td>
+                                                                        <td dmx-text="montant.toNumber().formatNumber(0, ' ', ' ')" class="bg-white fw-bold"></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                                <tfoot>
+                                                                    <tr>
+                                                                        <td class="bg-white fw-bold">MONTANT TOTAL</td>
+                                                                        <td class="bg-white">0&nbsp;</td>
+                                                                        <td class="bg-white">0</td>
+                                                                        <td class="bg-white fw-bold"><span>{{scFactureOriginal.data.FactureOr.data[0].facmontant.toNumber().formatNumber(0, ' ', ' ')}}&nbsp;</span></td>
+                                                                    </tr>
+                                                                </tfoot>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+
+
+
+
+                                    </div>
+                                    <div class="card-footer shadow-sm bg-white"></div>
+                                </div>
+                                <div class="card h-100 bg-white ms-1 me-1 border border-dark-subtle">
+
+                                    <div class="card-header text-body-secondary shadow-sm text-center bg-white">
+                                        <h6 class="card-title text-center fw-bold lh-1 mt-1 small text-uppercase text-primary">facture simuléE</h6>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div class="row mt-2" dmx-hide="scFactureSimulee.data.apiSimulation.data">
+                                            <div class="col small">
+
+
+                                                <img src="/assets/images/facture.jpg" class="img-fluid img-thumbnail" width="55">
+                                                <p class="fw-bold lh-lg text-danger">{{scFactureSimulee.lastError.status==404?'Aucune Facture Trouvée':''}}</p>
+                                                <div class="spinner-border text-primary spinner-border-sm" role="status" dmx-show="scFactureSimulee.state.executing">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" dmx-show="!scFactureSimulee.data.apiSimulation.data.isEmpty()">
+                                            <div class="col">
+                                                <div class="row mb-3">
+                                                    <div class="col">
+                                                        <div class="card-group justify-content-between shadow-sm">
+                                                            <div class="card pb-0 bg-opacity-10 bg-primary">
+                                                                <div class="card-body text-start pt-2 pb-0 small fw-bold">
+                                                                    <div class="row mt-1 mb-0 pt-0 pb-0">
+                                                                        <div class="col small mb-0 pb-0 ps-2">
+                                                                            <p class="lh-1">- Facture N :&nbsp; &nbsp;<span style="font-weight: normal;">{{scFactureOriginal.data.FactureOr.data[0].num_facture}}&nbsp;&nbsp;</span></p>
+                                                                            <p class="lh-1">- Date Facture :&nbsp; &nbsp;<span style="font-weight: normal;">{{scFactureOriginal.data.FactureOr.data[0].date_emission.toDate().formatDate('dd/MM/yyyy')}}</span></p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="card">
+                                                                <div class="card-body pt-1 pb-0 small fw-bold bg-primary bg-opacity-10">
+                                                                    <div class="row mt-1 mb-0 pt-0 pb-0">
+                                                                        <div class="col small text-start pt-0 pb-0 ps-2">
+                                                                            <p class="lh-1">- Categ. Tarif :&nbsp; <span style="font-weight: 400;">{{scFactureSimulee.data.custom[0].libelle}}</span></p>
+                                                                            <p class="lh-1">- Puiss. souscrite :&nbsp; &nbsp;<span style="font-weight: normal;">{{scFactureOriginal.data.FactureOr.data[0].ps}}&nbsp;</span> &nbsp;<span style="font-weight: normal;">KVA</span></p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="card bg-white">
+                                                                <div class="card-body small fw-bold bg-opacity-10 bg-primary">
+                                                                    <div class="row">
+                                                                        <div class="col small text-start ps-2">
+                                                                            <p class="lh-1">- Cellule :&nbsp; <span style="font-weight: normal;">5</span></p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col pb-0">
+                                                        <div class="table-responsive small">
+                                                            <table class="table table-sm table-bordered small lh-sm shadow-sm">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th scope="row" class="bg-primary bg-opacity-10 text-primary-emphasis">Date des relèves</th>
+                                                                        <th scope="col" class="bg-opacity-10 bg-primary text-primary-emphasis">Index actif
+                                                                            <br>Coeff : {{scFactureOriginal.data.FactureOr.data[0].coeff_mult_act}}
+                                                                        </th>
+                                                                        <th scope="col" class="bg-opacity-10 bg-primary text-primary-emphasis">Index réactif
+                                                                            <br>Coeff : {{scFactureOriginal.data.FactureOr.data[0].coeff_mult_rea}}
+                                                                        </th>
+                                                                        <th scope="col" class="bg-primary bg-opacity-10 text-primary-emphasis">I.P.M
+                                                                            <br>Coeff : {{scFactureOriginal.data.FactureOr.data[0].coeff_mult_ipm}}
+                                                                        </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td class="bg-white">{{scFactureOriginal.data.FactureOr.data[0].ancienne_date.toDate().formatDate('dd/MM/yyyy')}}</td>
+                                                                        <td class="bg-white"><a href="#"></a>{{scFactureOriginal.data.FactureOr.data[0].ancien_index.toNumber().formatNumber(0, ' ', ' ')}}</td>
+                                                                        <td class="bg-white">{{scFactureOriginal.data.FactureOr.data[0].ancien_index_r.toNumber().formatNumber(0, ' ', ' ')}}</td>
+                                                                        <td class="bg-white">{{scFactureOriginal.data.FactureOr.data[0].ipm_releve.toNumber().formatNumber(0, ' ', ' ')}}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td class="bg-white">{{scFactureOriginal.data.FactureOr.data[0].nouveau_date.toDate().formatDate('dd/MM/yyyy')}}</td>
+                                                                        <td class="bg-white">{{scFactureOriginal.data.FactureOr.data[0].nouvel_index.toNumber().formatNumber(0, ' ', ' ')}}</td>
+                                                                        <td class="bg-white">{{scFactureOriginal.data.FactureOr.data[0].index_r.toNumber().formatNumber(0, ' ', ' ')}}</td>
+                                                                        <td class="bg-white"></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td class="fw-bold bg-primary bg-opacity-10 text-primary-emphasis">Consommation</td>
+                                                                        <td class="bg-primary bg-opacity-10 fw-bold text-primary-emphasis">{{scFactureOriginal.data.FactureOr.data[0].conso_a.toNumber().formatNumber(0, ' ', ' ')}}</td>
+                                                                        <td class="bg-primary bg-opacity-10 fw-bold text-primary-emphasis">{{scFactureOriginal.data.FactureOr.data[0].conso_rec.toNumber().formatNumber(0, ' ', ' ')}}</td>
+                                                                        <td class="bg-primary bg-opacity-10 fw-bold text-primary-emphasis">{{(scFactureOriginal.data.FactureOr.data[0].ipm_releve * scFactureOriginal.data.FactureOr.data[0].coeff_mult_ipm).toNumber().formatNumber(0, ' ', ' ')}}</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col small">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered table-sm small">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="bg-primary bg-opacity-10 text-primary-emphasis">Libelle</th>
+                                                                        <th class="bg-opacity-10 bg-primary text-primary-emphasis">Quantite</th>
+                                                                        <th class="bg-opacity-10 bg-primary text-primary-emphasis">Prix unitaire</th>
+                                                                        <th class="bg-opacity-10 bg-primary text-primary-emphasis">Montant</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody is="dmx-repeat" dmx-generator="bs5table" dmx-bind:repeat="scFactureSimulee.data.apiSimulation.data" id="tableRepeat2">
+                                                                    <tr>
+                                                                        <td dmx-text="libelles" class="bg-white fw-bold text-uppercase"></td>
+                                                                        <td dmx-text="quantite.toNumber().formatNumber(0, ' ', ' ')" class="bg-white"></td>
+                                                                        <td dmx-text="prix_unitaire.formatNumber(2, '.', ',')" class="bg-white"></td>
+                                                                        <td dmx-text="montant.toNumber().formatNumber(0, ' ', ' ')" class="bg-white fw-bold"></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                                <tfoot>
+                                                                    <tr>
+                                                                    </tr>
+                                                                </tfoot>
+                                                            </table>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+
+                                    </div>
+                                    <div class="card-footer shadow-sm bg-white">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-xl-9 col-lg-9 mb-3" id="facture2" dmx-show="TypeFacture.value==2">
+            <div class="row">
+                <div class="col mb-1">
+                    <div class="card shadow-sm bg-white mb-1">
+
+                        <div class="card-header shadow-sm fw-bold small bg-opacity-75 text-uppercase text-white" dmx-style:background-color.important="'#0047B6'"><i class="fas fa-filter">&nbsp;</i> Filtre</div>
+                        <div class="card-body pt-2 pb-0">
+                            <div class="row">
+                                <div class="col ps-4">
+                                    <form id="SearchFacture1">
+                                        <div class="row">
+
+                                            <div class="small fw-bold col-2 text-body-secondary text-capitalize ps-0">
+                                                <div class="form-group mb-3"><label class="form-label"><i class="fas fa-arrow-alt-circle-right">&nbsp;&nbsp;</i>Année</label>
+                                                    <select id="Annee2" class="form-select form-select-sm" style="background-color: #F7F7F7">
+                                                        <option value="2024">2024</option>
+                                                        <option value="2023">2023</option>
+                                                        <option value="2022">2022</option>
+                                                        <option value="2021">2021</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <!--<div class="small fw-bold col-2 text-body-secondary ps-0">
+                                        <div class="form-group mb-3">
+
+                                            <label class="form-label"><i class="fas fa-arrow-alt-circle-right">&nbsp;&nbsp;</i>Catg. Tarif&nbsp;</label><input id="tarifOr" name="text2" type="text" class="form-control form-control-sm" style="background-color: #F7F7F7" disabled="true">
+                                        </div>
+
+                                    </div>-->
+                                            <div class="small fw-bold text-body-secondary ps-0 col-3">
+                                                <div class="form-group mb-3">
+
+                                                    <label class="form-label"><i class="fas fa-arrow-alt-circle-right">&nbsp;&nbsp;</i>Catg. Tarif a simulée&nbsp;</label><select id="TarifSimuler1" class="form-select form-select-sm" style="background-color: #F7F7F7" required="">
+                                                        <option value="">--- Choisir un Tarif ---</option>
+                                                        <option value="3">GENERAL NON DOMESTIQUE</option>
+                                                        <option value="11">MT DJIBOUTI</option>
+                                                        <option value="5">DEGRESSIF</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4 pt-1 ps-0 col-2">
+                                                <button id="btnSimuler1" class="btn shadow-sm btn-sm small fw-bold text-capitalize ms-1 btn-outline-primary bg-opacity-100" dmx-on:click="run([{run:{outputType:'text',action:`TarifSimuler1.validate()`}},{run:{outputType:'text',action:`sc12FactureSimuler.reset();sc12FactureSimuler.load({idcontrat: formContrat.data.custom.data[0].id_contrat, annee: Annee2.value, idtarif: TarifSimuler1.value})`}}])"><i class="fas fa-calculator">&nbsp;&nbsp;</i>Simuler</button>
+
+                                            </div>
+
+                                        </div>
+
+
+
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card shadow-sm bg-white">
+
+                <div class="card-header shadow-sm fw-bold small bg-opacity-75 text-uppercase text-white" dmx-style:background-color.important="'#0047B6'"><i class="fas fa-info">&nbsp;&nbsp;</i> Détails des Factures ( SIMULATION )</div>
+                <div class="card-body shadow-sm">
+                    <div class="row">
+
+                        <div class="col">
+
+                            <div class="card bg-white ms-1 me-1 border border-dark-subtle">
+
+                                <div class="card-header text-body-secondary shadow-sm bg-white text-center">
+                                    <h6 class="card-title text-center fw-bold lh-1 mt-1 small text-uppercase text-primary">factureS</h6>
+                                </div>
+                                <div class="card-body text-center">
+
+                                    <div class="row" dmx-hide="!sc12FactureSimuler.data.custom.isEmpty()">
+                                        <div class="col small">
+
+
+                                            <div class="spinner-border text-primary spinner-border-sm" role="status" dmx-show="sc12FactureSimuler.state.executing">
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="row" dmx-show="!sc12FactureSimuler.data.custom.data.isEmpty()">
+                                        <div class="col">
+                                            <div class="spinner-border text-primary spinner-border-sm" role="status" dmx-show="sc12FactureSimuler.state.executing">
+                                            </div>
+                                            <div class="table-responsive small" dmx-hide="sc12FactureSimuler.state.executing">
+                                                <table class="table table-sm table-borderless table-bordered">
+                                                    <tbody id="tableSimulerAnnee">
+                                                        <tr class="fw-bold">
+                                                            <th scope="row" class="text-bg-primary bg-opacity-75 text-start text-uppercase shadow">Nom periode</th>
+                                                            <td class="bg-opacity-75">{{sc12FactureSimuler.data.custom.data[0].nom_periode}}</td>
+                                                            <td class="bg-opacity-75">{{sc12FactureSimuler.data.custom.data[1].nom_periode}}</td>
+                                                            <td class="bg-opacity-75">{{sc12FactureSimuler.data.custom.data[2].nom_periode}}</td>
+                                                            <td class="bg-opacity-75">{{sc12FactureSimuler.data.custom.data[3].nom_periode}}</td>
+                                                            <td class="bg-opacity-75">{{sc12FactureSimuler.data.custom.data[4].nom_periode}}</td>
+                                                            <td class="bg-opacity-75">{{sc12FactureSimuler.data.custom.data[5].nom_periode}}</td>
+                                                            <td class="bg-opacity-75">{{sc12FactureSimuler.data.custom.data[6].nom_periode}}</td>
+                                                            <td class="bg-opacity-75">{{sc12FactureSimuler.data.custom.data[7].nom_periode}}</td>
+                                                            <td class="bg-opacity-75">{{sc12FactureSimuler.data.custom.data[8].nom_periode}}</td>
+                                                            <td class="bg-opacity-75">{{sc12FactureSimuler.data.custom.data[9].nom_periode}}</td>
+                                                            <td class="bg-opacity-75">{{sc12FactureSimuler.data.custom.data[10].nom_periode}}</td>
+                                                            <td class="bg-opacity-75">{{sc12FactureSimuler.data.custom.data[11].nom_periode}}</td>
+                                                        </tr>
+                                                        <tr class="fw-bold text-white">
+                                                            <th scope="row" class="text-start text-uppercase text-bg-primary bg-opacity-75">Montant REEL ( fdj )</th>
+
+
+                                                            <td dmx-style:background-color="'#5da5da'" class="text-white">{{sc12FactureSimuler.data.custom.data[0].mtn_reel?(sc12FactureSimuler.data.custom.data[0].mtn_reel.toNumber().formatNumber(0, ' ', ' ')):''}}</td>
+
+
+                                                            <td dmx-style:background-color="'#5da5da'" class="text-white">{{sc12FactureSimuler.data.custom.data[1].mtn_reel?(sc12FactureSimuler.data.custom.data[1].mtn_reel.toNumber().formatNumber(0, ' ', ' ')):''}}</td>
+
+
+                                                            <td dmx-style:background-color="'#5da5da'" class="text-white">{{sc12FactureSimuler.data.custom.data[2].mtn_reel?(sc12FactureSimuler.data.custom.data[2].mtn_reel.toNumber().formatNumber(0, ' ', ' ')):''}}</td>
+
+
+                                                            <td dmx-style:background-color="'#5da5da'" class="text-white">{{sc12FactureSimuler.data.custom.data[3].mtn_reel?(sc12FactureSimuler.data.custom.data[3].mtn_reel.toNumber().formatNumber(0, ' ', ' ')):''}}</td>
+
+
+                                                            <td dmx-style:background-color="'#5da5da'" class="text-white">{{sc12FactureSimuler.data.custom.data[4].mtn_reel?(sc12FactureSimuler.data.custom.data[4].mtn_reel.toNumber().formatNumber(0, ' ', ' ')):''}}</td>
+
+
+                                                            <td dmx-style:background-color="'#5da5da'" class="text-white">{{sc12FactureSimuler.data.custom.data[5].mtn_reel?(sc12FactureSimuler.data.custom.data[5].mtn_reel.toNumber().formatNumber(0, ' ', ' ')):''}}</td>
+
+
+                                                            <td dmx-style:background-color="'#5da5da'" class="text-white">{{sc12FactureSimuler.data.custom.data[6].mtn_reel?(sc12FactureSimuler.data.custom.data[6].mtn_reel.toNumber().formatNumber(0, ' ', ' ')):''}}</td>
+
+
+                                                            <td dmx-style:background-color="'#5da5da'" class="text-white">{{sc12FactureSimuler.data.custom.data[7].mtn_reel?(sc12FactureSimuler.data.custom.data[7].mtn_reel.toNumber().formatNumber(0, ' ', ' ')):''}}</td>
+
+
+                                                            <td dmx-style:background-color="'#5da5da'" class="text-white">{{sc12FactureSimuler.data.custom.data[8].mtn_reel?(sc12FactureSimuler.data.custom.data[8].mtn_reel.toNumber().formatNumber(0, ' ', ' ')):''}}</td>
+
+
+                                                            <td dmx-style:background-color="'#5da5da'" class="text-white">{{sc12FactureSimuler.data.custom.data[9].mtn_reel?(sc12FactureSimuler.data.custom.data[9].mtn_reel.toNumber().formatNumber(0, ' ', ' ')):''}}</td>
+
+
+                                                            <td dmx-style:background-color="'#5da5da'" class="text-white">{{sc12FactureSimuler.data.custom.data[10].mtn_reel?(sc12FactureSimuler.data.custom.data[10].mtn_reel.toNumber().formatNumber(0, ' ', ' ')):''}}</td>
+
+
+                                                            <td dmx-style:background-color="'#5da5da'" class="text-white">{{sc12FactureSimuler.data.custom.data[11].mtn_reel?(sc12FactureSimuler.data.custom.data[11].mtn_reel.toNumber().formatNumber(0, ' ', ' ')):''}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row" class="text-start text-uppercase bg-opacity-75 text-bg-primary">Montant SIMULÉE ( FDJ )</th>
+
+
+
+                                                            <td dmx-style:background-color="'#faa43a'" class="fw-bold"><i class="fas fa-arrow-down" dmx-show="sc12FactureSimuler.data.custom.data[0].simule.toNumber()<sc12FactureSimuler.data.custom.data[0].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'"></i><i class="fas fa-arrow-up" dmx-show="sc12FactureSimuler.data.custom.data[0].simule.toNumber()>sc12FactureSimuler.data.custom.data[0].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'">&nbsp;&nbsp;</i>
+                                                                {{sc12FactureSimuler.data.custom.data[0].simule?(sc12FactureSimuler.data.custom.data[0].simule.toNumber().formatNumber(0, ' ', ' ')):''}}</td>
+
+
+                                                            <td dmx-style:background-color="'#faa43a'" class="fw-bold"><i class="fas fa-arrow-down" dmx-show="sc12FactureSimuler.data.custom.data[1].simule.toNumber()&lt;sc12FactureSimuler.data.custom.data[1].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'"></i>
+                                                                <i class="fas fa-arrow-up" dmx-show="sc12FactureSimuler.data.custom.data[1].simule.toNumber()&gt;sc12FactureSimuler.data.custom.data[1].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'">&nbsp;&nbsp;</i>{{sc12FactureSimuler.data.custom.data[1].simule?(sc12FactureSimuler.data.custom.data[1].simule.toNumber().formatNumber(0, ' ', ' ')):''}}
+                                                            </td>
+
+
+                                                            <td dmx-style:background-color="'#faa43a'" class="fw-bold"><i class="fas fa-arrow-down" dmx-show="sc12FactureSimuler.data.custom.data[2].simule.toNumber()&lt;sc12FactureSimuler.data.custom.data[2].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'"></i>
+                                                                <i class="fas fa-arrow-up" dmx-show="sc12FactureSimuler.data.custom.data[2].simule.toNumber()&gt;sc12FactureSimuler.data.custom.data[2].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'">&nbsp;&nbsp;</i>{{sc12FactureSimuler.data.custom.data[2].simule?(sc12FactureSimuler.data.custom.data[2].simule.toNumber().formatNumber(0, ' ', ' ')):''}}
+                                                            </td>
+
+
+                                                            <td dmx-style:background-color="'#faa43a'" class="fw-bold"><i class="fas fa-arrow-down" dmx-show="sc12FactureSimuler.data.custom.data[3].simule.toNumber()&lt;sc12FactureSimuler.data.custom.data[3].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'"></i>
+                                                                <i class="fas fa-arrow-up" dmx-show="sc12FactureSimuler.data.custom.data[3].simule.toNumber()&gt;sc12FactureSimuler.data.custom.data[3].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'">&nbsp;&nbsp;</i>{{sc12FactureSimuler.data.custom.data[3].simule?(sc12FactureSimuler.data.custom.data[3].simule.toNumber().formatNumber(0, ' ', ' ')):''}}
+                                                            </td>
+
+
+                                                            <td dmx-style:background-color="'#faa43a'" class="fw-bold"><i class="fas fa-arrow-down" dmx-show="sc12FactureSimuler.data.custom.data[4].simule.toNumber()&lt;sc12FactureSimuler.data.custom.data[4].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'"></i>
+                                                                <i class="fas fa-arrow-up" dmx-show="sc12FactureSimuler.data.custom.data[4].simule.toNumber()&gt;sc12FactureSimuler.data.custom.data[4].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'">&nbsp;&nbsp;</i>{{sc12FactureSimuler.data.custom.data[4].simule?(sc12FactureSimuler.data.custom.data[4].simule.toNumber().formatNumber(0, ' ', ' ')):''}}
+                                                            </td>
+
+
+
+                                                            <td dmx-style:background-color="'#faa43a'" class="fw-bold"><i class="fas fa-arrow-down" dmx-show="sc12FactureSimuler.data.custom.data[5].simule.toNumber()&lt;sc12FactureSimuler.data.custom.data[5].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'"></i>
+                                                                <i class="fas fa-arrow-up" dmx-show="sc12FactureSimuler.data.custom.data[5].simule.toNumber()&gt;sc12FactureSimuler.data.custom.data[5].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'">&nbsp;&nbsp;</i>{{sc12FactureSimuler.data.custom.data[5].simule?(sc12FactureSimuler.data.custom.data[5].simule.toNumber().formatNumber(0, ' ', ' ')):''}}
+                                                            </td>
+
+
+
+                                                            <td dmx-style:background-color="'#faa43a'" class="fw-bold"><i class="fas fa-arrow-down" dmx-show="sc12FactureSimuler.data.custom.data[6].simule.toNumber()&lt;sc12FactureSimuler.data.custom.data[6].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'"></i>
+                                                                <i class="fas fa-arrow-up" dmx-show="sc12FactureSimuler.data.custom.data[6].simule.toNumber()&gt;sc12FactureSimuler.data.custom.data[6].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'">&nbsp;&nbsp;</i>{{sc12FactureSimuler.data.custom.data[6].simule?(sc12FactureSimuler.data.custom.data[6].simule.toNumber().formatNumber(0, ' ', ' ')):''}}
+                                                            </td>
+
+
+
+                                                            <td dmx-style:background-color="'#faa43a'" class="fw-bold"><i class="fas fa-arrow-down" dmx-show="sc12FactureSimuler.data.custom.data[7].simule.toNumber()&lt;sc12FactureSimuler.data.custom.data[7].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'"></i>
+                                                                <i class="fas fa-arrow-up" dmx-show="sc12FactureSimuler.data.custom.data[7].simule.toNumber()&gt;sc12FactureSimuler.data.custom.data[7].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'">&nbsp;&nbsp;</i>{{sc12FactureSimuler.data.custom.data[7].simule?(sc12FactureSimuler.data.custom.data[7].simule.toNumber().formatNumber(0, ' ', ' ')):''}}
+                                                            </td>
+
+
+
+                                                            <td dmx-style:background-color="'#faa43a'" class="fw-bold"><i class="fas fa-arrow-down" dmx-show="sc12FactureSimuler.data.custom.data[8].simule.toNumber()&lt;sc12FactureSimuler.data.custom.data[8].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'"></i>
+                                                                <i class="fas fa-arrow-up" dmx-show="sc12FactureSimuler.data.custom.data[8].simule.toNumber()&gt;sc12FactureSimuler.data.custom.data[8].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'">&nbsp;&nbsp;</i>{{sc12FactureSimuler.data.custom.data[8].simule?(sc12FactureSimuler.data.custom.data[8].simule.toNumber().formatNumber(0, ' ', ' ')):''}}
+                                                            </td>
+
+
+
+                                                            <td dmx-style:background-color="'#faa43a'" class="fw-bold"><i class="fas fa-arrow-down" dmx-show="sc12FactureSimuler.data.custom.data[9].simule.toNumber()&lt;sc12FactureSimuler.data.custom.data[9].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'"></i>
+                                                                <i class="fas fa-arrow-up" dmx-show="sc12FactureSimuler.data.custom.data[9].simule.toNumber()&gt;sc12FactureSimuler.data.custom.data[9].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'">&nbsp;&nbsp;</i>{{sc12FactureSimuler.data.custom.data[9].simule?(sc12FactureSimuler.data.custom.data[9].simule.toNumber().formatNumber(0, ' ', ' ')):''}}
+                                                            </td>
+
+
+
+                                                            <td dmx-style:background-color="'#faa43a'" class="fw-bold"><i class="fas fa-arrow-down" dmx-show="sc12FactureSimuler.data.custom.data[10].simule.toNumber()&lt;sc12FactureSimuler.data.custom.data[10].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'"></i>
+                                                                <i class="fas fa-arrow-up" dmx-show="sc12FactureSimuler.data.custom.data[10].simule.toNumber()&gt;sc12FactureSimuler.data.custom.data[10].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'">&nbsp;&nbsp;</i>{{sc12FactureSimuler.data.custom.data[10].simule?(sc12FactureSimuler.data.custom.data[10].simule.toNumber().formatNumber(0, ' ', ' ')):''}}
+                                                            </td>
+
+
+
+                                                            <td dmx-style:background-color="'#faa43a'" class="fw-bold"><i class="fas fa-arrow-down" dmx-show="sc12FactureSimuler.data.custom.data[11].simule.toNumber()&lt;sc12FactureSimuler.data.custom.data[11].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'"></i>
+                                                                <i class="fas fa-arrow-up" dmx-show="sc12FactureSimuler.data.custom.data[11].simule.toNumber()&gt;sc12FactureSimuler.data.custom.data[11].mtn_reel.toNumber()" dmx-style:color.important="'#ffffff'">&nbsp;&nbsp;</i>{{sc12FactureSimuler.data.custom.data[11].simule?(sc12FactureSimuler.data.custom.data[11].simule.toNumber().formatNumber(0, ' ', ' ')):''}}
+                                                            </td>
+
+
+
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row" class="text-start text-uppercase bg-opacity-75 text-bg-primary">DIFFERENCE ( FDJ )</th>
+
+                                                            <td class="bg-white">{{sc12FactureSimuler.data.custom.data[0].mtn_reel.toNumber()&gt;sc12FactureSimuler.data.custom.data[0].simule.toNumber()     ?((sc12FactureSimuler.data.custom.data[0].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[0].simule.toNumber() ).formatNumber(0, ' ', ' '))     :((sc12FactureSimuler.data.custom.data[0].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[0].simule.toNumber())*(-1)).formatNumber(0, ' ', ' ')}}<br></td>
+
+                                                            <td class="bg-white">{{sc12FactureSimuler.data.custom.data[1].mtn_reel.toNumber()&gt;sc12FactureSimuler.data.custom.data[1].simule.toNumber()     ?((sc12FactureSimuler.data.custom.data[1].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[1].simule.toNumber() ).formatNumber(0, ' ', ' '))     :((sc12FactureSimuler.data.custom.data[1].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[1].simule.toNumber())*(-1)).formatNumber(0, ' ', ' ')}}</td>
+
+                                                            <td class="bg-white">{{sc12FactureSimuler.data.custom.data[2].mtn_reel.toNumber()&gt;sc12FactureSimuler.data.custom.data[2].simule.toNumber()     ?((sc12FactureSimuler.data.custom.data[2].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[2].simule.toNumber() ).formatNumber(0, ' ', ' '))     :((sc12FactureSimuler.data.custom.data[2].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[2].simule.toNumber())*(-1)).formatNumber(0, ' ', ' ')}}</td>
+
+                                                            <td class="bg-white">{{sc12FactureSimuler.data.custom.data[3].mtn_reel.toNumber()&gt;sc12FactureSimuler.data.custom.data[3].simule.toNumber()     ?((sc12FactureSimuler.data.custom.data[3].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[3].simule.toNumber() ).formatNumber(0, ' ', ' '))     :((sc12FactureSimuler.data.custom.data[3].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[3].simule.toNumber())*(-1)).formatNumber(0, ' ', ' ')}}</td>
+
+                                                            <td class="bg-white">{{sc12FactureSimuler.data.custom.data[4].mtn_reel.toNumber()&gt;sc12FactureSimuler.data.custom.data[4].simule.toNumber()     ?((sc12FactureSimuler.data.custom.data[4].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[4].simule.toNumber() ).formatNumber(0, ' ', ' '))     :((sc12FactureSimuler.data.custom.data[4].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[4].simule.toNumber())*(-1)).formatNumber(0, ' ', ' ')}}</td>
+
+                                                            <td class="bg-white">{{sc12FactureSimuler.data.custom.data[5].mtn_reel.toNumber()&gt;sc12FactureSimuler.data.custom.data[5].simule.toNumber()     ?((sc12FactureSimuler.data.custom.data[5].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[5].simule.toNumber() ).formatNumber(0, ' ', ' '))     :((sc12FactureSimuler.data.custom.data[5].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[5].simule.toNumber())*(-1)).formatNumber(0, ' ', ' ')}}</td>
+
+                                                            <td class="bg-white">{{sc12FactureSimuler.data.custom.data[6].mtn_reel?(sc12FactureSimuler.data.custom.data[6].mtn_reel.toNumber()&gt;sc12FactureSimuler.data.custom.data[6].simule.toNumber()?((sc12FactureSimuler.data.custom.data[6].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[6].simule.toNumber() ).formatNumber(0, ' ', ' ')):((sc12FactureSimuler.data.custom.data[6].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[6].simule.toNumber())*(-1)).formatNumber(0, ' ', ' ')):''}}</td>
+
+                                                            <td class="bg-white">{{sc12FactureSimuler.data.custom.data[7].mtn_reel?(sc12FactureSimuler.data.custom.data[7].mtn_reel.toNumber()&gt;sc12FactureSimuler.data.custom.data[7].simule.toNumber()?((sc12FactureSimuler.data.custom.data[7].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[7].simule.toNumber() ).formatNumber(0, ' ', ' ')):((sc12FactureSimuler.data.custom.data[7].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[7].simule.toNumber())*(-1)).formatNumber(0, ' ', ' ')):''}}</td>
+
+                                                            <td class="bg-white">{{sc12FactureSimuler.data.custom.data[8].mtn_reel?(sc12FactureSimuler.data.custom.data[8].mtn_reel.toNumber()&gt;sc12FactureSimuler.data.custom.data[8].simule.toNumber()?((sc12FactureSimuler.data.custom.data[8].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[8].simule.toNumber() ).formatNumber(0, ' ', ' ')):((sc12FactureSimuler.data.custom.data[8].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[8].simule.toNumber())*(-1)).formatNumber(0, ' ', ' ')):''}}</td>
+
+                                                            <td class="bg-white">{{sc12FactureSimuler.data.custom.data[9].mtn_reel?(sc12FactureSimuler.data.custom.data[9].mtn_reel.toNumber()&gt;sc12FactureSimuler.data.custom.data[9].simule.toNumber()?((sc12FactureSimuler.data.custom.data[9].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[9].simule.toNumber() ).formatNumber(0, ' ', ' ')):((sc12FactureSimuler.data.custom.data[9].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[9].simule.toNumber())*(-1)).formatNumber(0, ' ', ' ')):''}}</td>
+
+                                                            <td class="bg-white">{{sc12FactureSimuler.data.custom.data[10].mtn_reel?(sc12FactureSimuler.data.custom.data[10].mtn_reel.toNumber()&gt;sc12FactureSimuler.data.custom.data[10].simule.toNumber()?((sc12FactureSimuler.data.custom.data[10].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[10].simule.toNumber() ).formatNumber(0, ' ', ' ')):((sc12FactureSimuler.data.custom.data[10].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[10].simule.toNumber())*(-1)).formatNumber(0, ' ', ' ')):''}}</td>
+
+                                                            <td class="bg-white">{{sc12FactureSimuler.data.custom.data[11].mtn_reel?(sc12FactureSimuler.data.custom.data[11].mtn_reel.toNumber()&gt;sc12FactureSimuler.data.custom.data[11].simule.toNumber()?((sc12FactureSimuler.data.custom.data[11].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[11].simule.toNumber() ).formatNumber(0, ' ', ' ')):((sc12FactureSimuler.data.custom.data[11].mtn_reel.toNumber()-sc12FactureSimuler.data.custom.data[11].simule.toNumber())*(-1)).formatNumber(0, ' ', ' ')):''}}</td>
+
+
+                                                        </tr>
+
+                                                    </tbody>
+                                                </table>
+
+
+
+
+
+
+
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+
+                                </div>
+                                <div class="card-footer shadow-sm bg-white">
+                                </div>
+                            </div>
+                            <div class="card-group align-items-start">
+
+                                <div class="card bg-white border border-dark-subtle mt-3 ms-1 me-1">
+
+                                    <div class="card-header text-body-secondary shadow-sm bg-white text-center">
+                                        <h6 class="card-title text-center fw-bold lh-1 mt-1 small text-uppercase text-primary">graph De comparaison</h6>
+
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div class="row" dmx-hide="!sc12FactureSimuler.data.custom.isEmpty()">
+                                            <div class="col small">
+
+
+                                                <div class="spinner-border text-primary spinner-border-sm" role="status" dmx-show="sc12FactureSimuler.state.executing">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row ps-2" dmx-show="!sc12FactureSimuler.data.custom.isEmpty()">
+                                            <div class="col-12 text-center">
+
+                                                <dmx-chart id="graphfacture" point-style="line" dataset-1:value="mtn_reel" dataset-1:label="Montant reel" dataset-2:label="Montant Simulee" dataset-2:value="simule" dataset-1:tooltip="" dataset-2:tooltip="" thickness="4" colors="colors1" labels="nom_periode" height="350" legend="top" dmx-bind:data="sc12FactureSimuler.data.custom.data" width="600" responsive="true"></dmx-chart>
+                                            </div>
+                                        </div>
+
+
+
+
+                                    </div>
+                                    <div class="card-footer shadow-sm bg-white">
+                                    </div>
+                                </div>
+                                <div class="card bg-white border border-dark-subtle mt-3 ms-1 me-1">
+
+                                    <div class="card-header text-body-secondary shadow-sm bg-white text-center">
+                                        <h6 class="card-title text-center fw-bold lh-1 mt-1 small text-uppercase text-primary">Rapport ( FACTUREs SIMULÉEs )</h6>
+
+                                    </div>
+                                    <div class="card-body text-center">
+
+
+                                        <div class="row" dmx-hide="!sc12FactureSimuler.data.custom.isEmpty()">
+                                            <div class="col small">
+
+
+                                                <div class="spinner-border text-primary spinner-border-sm" role="status" dmx-show="sc12FactureSimuler.state.executing">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" dmx-show="!sc12FactureSimuler.data.custom.isEmpty()">
+                                            <div class="col-12">
+
+                                                <div class="card shadow-sm bg-white border">
+                                                    <div class="card-body">
+                                                        <h4 class="card-title text-primary fw-bold">{{sc12FactureSimuler.data.custom.data[0].annee}}</h4>
+                                                    </div>
+                                                </div>
+                                                <div class="card shadow-sm bg-white border mt-2">
+                                                    <div class="card-body">
+                                                        <h4 class="card-title text-primary fw-bold">{{sc12FactureSimuler.data.custom1[0].libelle}}</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" dmx-show="!sc12FactureSimuler.data.custom.isEmpty()">
+                                            <div class="col mt-2">
+                                                <div class="card-group">
+                                                    <div class="card shadow-sm border text-bg-primary bg-opacity-50">
+                                                        <div class="card-body">
+                                                            <h4 class="card-title"><b><span style="">{{sc12FactureSimuler.data.list[0].up}}&nbsp; /&nbsp; 12</span> Factures</b>&nbsp;&nbsp;<i class="fas fa-arrow-up fa-lg"></i></h4>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card shadow-sm border text-bg-primary bg-opacity-50">
+                                                        <div class="card-body">
+                                                            <h4 class="card-title"><b><span style="">{{sc12FactureSimuler.data.list[0].down}}&nbsp; /&nbsp; 12</span> Factures</b>&nbsp;&nbsp;<i class="fas fa-arrow-down fa-lg"></i></h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" dmx-show="!sc12FactureSimuler.data.custom.isEmpty()">
+                                            <div class="col mt-2">
+                                                <div class="card">
+                                                    <div class="card-body text-start">
+                                                        <p class="card-text"><b><i class="fas fa-comment-alt">&nbsp;&nbsp;</i>Remarque : </b><span>{{sc12FactureSimuler.data.list[0].up&gt;=sc12FactureSimuler.data.list[0].down?"Dans l'ensemble, les réductions ne sont pas suffisantes."     : "Dans l'ensemble, réduction significative observée.";}}</span></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+
+                                    </div>
+                                    <div class="card-footer shadow-sm bg-white">
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<meta name="ac:route" content="/">
+
+<style>
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    body {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    body::-webkit-scrollbar {
+        display: none;
+    }
+</style>
